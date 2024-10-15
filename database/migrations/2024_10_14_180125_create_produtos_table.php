@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('produtos', function (Blueprint $table) {
             $table->id(); // Cria a coluna id como chave primária
             $table->bigInteger('marca_cod'); // Cria a coluna cod_marca como string
+            $table->foreignId('cod_cidade')->constrained('cidades');
             $table->string('name'); // Cria a coluna name como string
+            $table->float('estoque');
             $table->text('descricao')->nullable(); // Cria a coluna descricao como texto, permitindo valores nulos
             $table->decimal('valor', 8, 2); // Cria a coluna valor para o preço do produto (com 8 dígitos no total e 2 casas decimais)
             $table->timestamps(); // Cria as colunas created_at e updated_at

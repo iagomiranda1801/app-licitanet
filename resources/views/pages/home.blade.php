@@ -12,6 +12,10 @@
                     <h4 class="mb-1">Gerenciar Marcas</h4>
                     <p>Visualize e gerencie as marcas cadastradas no sistema.</p>
                 </a>
+                <a href="{{ route('cidade.index') }}" class="list-group-item list-group-item-action">
+                    <h4 class="mb-1">Gerenciar Cidades</h4>
+                    <p>Visualize e gerencie os cidades cadastrados no sistema.</p>
+                </a>
                 <a href="{{ route('produto.index') }}" class="list-group-item list-group-item-action">
                     <h4 class="mb-1">Gerenciar Produtos</h4>
                     <p>Visualize e gerencie os produtos cadastrados no sistema.</p>
