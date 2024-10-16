@@ -13,10 +13,10 @@ class ProdutoController extends Controller
     {
         $name = $request->input('name');
         $cod_cidade = $request->input('cod_cidade');
-        $cod_marca = $request->input('cod_marca');
+        $cod_marca = $request->input('marca_cod');
         $estoque = $request->input('estoque');
         $vlInit = $request->input('vlinit');
-        $vlFim = $request->input('vlfim');
+        $vlFim = $request->input('vlFim');
 
         $query = Produto::query()->with(['marca', 'cidade']);
 
@@ -32,9 +32,12 @@ class ProdutoController extends Controller
         if ($estoque) {
             $query->where('estoque', $estoque);
         }
-        if ($vlInit) {
-            $query->where('valor', '>=', $vlInit)->where('valor', '<=', $vlFim);
+        if ($vlInit !== null) {
+            if ($vlInit <= $vlFim) {
+                $query->whereBetween('valor', [$vlInit, $vlFim]);
+            }
         }
+
 
         $produtos = $query->get();
         $cidades = Cidade::query()->get();
@@ -57,6 +60,42 @@ class ProdutoController extends Controller
         $marcas = Marca::all();
         return view('pages.produto-create', compact('cidades', 'marcas'));
     }
+
+    public function update(Request $request, $id)
+    {
+        // Validação dos dados
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'marca_cod' => 'required|integer',
+            'descricao' => 'nullable|string',
+            'estoque' => 'required|integer',
+            'valor' => 'required|numeric',
+            'cod_cidade' => 'required|integer',
+        ], [
+            'name.required' => 'O campo nome é obrigatório.',
+            'name.string' => 'O campo nome deve ser um texto.',
+            'name.max' => 'O campo nome não pode ter mais de 255 caracteres.',
+            'marca_cod.required' => 'O campo marca é obrigatório.',
+            'marca_cod.integer' => 'O campo marca deve ser um número inteiro.',
+            'descricao.string' => 'O campo descrição deve ser um texto.',
+            'estoque.required' => 'O campo estoque é obrigatório.',
+            'estoque.integer' => 'O campo estoque deve ser um número inteiro.',
+            'valor.required' => 'O campo valor é obrigatório.',
+            'valor.numeric' => 'O campo valor deve ser um número.',
+            'cod_cidade.required' => 'O campo cidade é obrigatório.',
+            'cod_cidade.integer' => 'O campo cidade deve ser um número inteiro.',
+        ]);
+
+        // Encontrar o produto pelo ID
+        $produto = Produto::findOrFail($id);
+
+        // Atualizar o produto com os dados validados
+        $produto->update($request->all());
+
+        // Redirecionar de volta com mensagem de sucesso
+        return redirect()->route('produto.index')->with('success', 'Produto atualizado com sucesso!');
+    }
+
 
     public function store(Request $request)
     {
@@ -94,5 +133,21 @@ class ProdutoController extends Controller
         Produto::create($validatedData);
 
         return redirect()->route('produto.index')->with('success', 'Produto cadastrado com sucesso.');
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $produto = Produto::query()->find($id);
+            dd($produto->estoque);
+            if ($produto->estoque > 0) {
+                return redirect()->route('produto.index')->with('error', 'Erro ao excluir, produto com saldo em estoque');
+            } else {
+                $produto->delete();
+                return redirect()->route('produto.index')->with('success', 'Produto excluida com sucesso.');
+            }
+        } catch (\Throwable $th) {
+            return redirect()->route('produto.index')->with('error', 'Erro ao excluir');
+        }
     }
 }

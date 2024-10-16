@@ -29,11 +29,17 @@
                 <select class="form-control" id="marca_cod" name="marca_cod">
                     <option value="">Selecione uma marca</option>
                     @foreach($marcas as $marca)
-                    <option value="{{ $marca->id }}" {{ $marca->cod_marca == $marca->id ? 'selected' : '' }}>
+                    <option value="{{ $marca->cod_marca }}" {{ $marca->cod_marca == $marca->id ? 'selected' : '' }}>
                         {{ $marca->name }}
                     </option>
                     @endforeach
                 </select>
+            </div>
+            <div class="col-md-4 mb-2">
+                <input type="number" name="vlinit" class="form-control" placeholder="Valor inicial" value="{{ request('vlinit') }}">
+            </div>
+            <div class="col-md-4 mb-2">
+                <input type="number" name="vlFim" class="form-control" placeholder="Valor final" value="{{ request('vlfim') }}">
             </div>
         </div>
         <div class="text-center">
@@ -43,6 +49,9 @@
     </form>
     <!-- Lista de marcas -->
     <div class="row">
+        @error('error')
+        <div class="text-danger">{{ $message }}</div>
+        @enderror
         @forelse ($produtos as $produto)
         <div class="col-md-4">
             <div class="card mb-4">
@@ -80,7 +89,7 @@
                         </button>
 
                         <!-- Botão para excluir o produto -->
-                        <button id="delete-button" type="submit" data-id="{{ $produto->id }}" class="btn btn-danger btn-sm">
+                        <button type="submit" data-id="{{ $produto->id }}" class="btn btn-danger btn-sm delete-button">
                             Excluir
                         </button>
                     </div>
@@ -206,7 +215,7 @@
             var valor = $(this).data('valor');
             var cidade = $(this).data('cidade');
             var marca = $(this).data('marca');
-      
+
             $('#name').val(name);
             $('#estoque').val(estoque);
             $('#descricao').val(descricao);
@@ -233,7 +242,7 @@
             $('#editModal').modal('show');
         });
 
-        $('#delete-button').on('click', function() {
+        $('.delete-button').on('click', function() {
             var id = $(this).data('id');
             Swal.fire({
                 title: 'Tem certeza?',
@@ -254,6 +263,7 @@
                             '_token': '{{ csrf_token() }}'
                         },
                         success: function(response) {
+                            console.log("response", response.data)
                             Swal.fire(
                                 'Excluído!',
                                 'O produto foi excluído com sucesso.',

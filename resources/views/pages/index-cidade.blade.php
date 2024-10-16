@@ -5,7 +5,7 @@
     <!-- Botão para criar nova marca -->
     <div class="text-right mb-4">
         <a href="{{ route('cidade.create') }}" class="btn btn-success">
-            <i class="fas fa-plus"></i> Novo
+            <i class="fas fa-plus"></i> Nova Cidade
         </a>
     </div>
     <!-- Filtro para pesquisa -->
