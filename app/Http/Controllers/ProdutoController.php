@@ -23,19 +23,15 @@ class ProdutoController extends Controller
         if ($name) {
             $query->where('name', 'like', '%' . $name . '%');
         }
-
         if ($cod_cidade) {
             $query->where('cod_cidade', $cod_cidade);
         }
-
         if ($cod_marca) {
-            $query->where('cod_marca', $cod_marca);
+            $query->where('marca_cod', $cod_marca);
         }
-
         if ($estoque) {
             $query->where('estoque', $estoque);
         }
-
         if ($vlInit) {
             $query->where('valor', '>=', $vlInit)->where('valor', '<=', $vlFim);
         }
@@ -43,13 +39,17 @@ class ProdutoController extends Controller
         $produtos = $query->get();
         $cidades = Cidade::query()->get();
         $marcas = Marca::query()->get();
-        // Retornando para a view 'marcas.index' com as marcas
-        return view('pages.index-produto', compact('produtos', 'marcas', 'cidades'));
-    }
-    
-    public function show($id) {
 
+        // Calcular a soma e a média dos valores dos produtos
+        $soma = $produtos->sum('valor');
+        $media = $produtos->avg('valor');
+
+        // Retornando para a view 'pages.index-produto' com os produtos, marcas, cidades, soma e média
+        return view('pages.index-produto', compact('produtos', 'marcas', 'cidades', 'soma', 'media'));
     }
+
+
+    public function show($id) {}
 
     public function create()
     {
@@ -60,25 +60,38 @@ class ProdutoController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'cod_marca' => 'required|integer',
+            'marca_cod' => 'required|integer',
             'descricao' => 'nullable|string',
-            'quantidade_estoque' => 'required|integer',
+            'estoque' => 'required|integer',
             'valor' => 'required|numeric',
-            'cidade_id' => 'required|exists:cidades,id',
-            'marca_id' => 'required|exists:marcas,id'
+            'cod_cidade' => 'required|exists:cidades,id',
+        ], [
+            'name.required' => 'O campo nome é obrigatório.',
+            'name.string' => 'O campo nome deve ser um texto.',
+            'name.max' => 'O nome não pode exceder 255 caracteres.',
+
+            'marca_cod.required' => 'O código da marca é obrigatório.',
+            'marca_cod.integer' => 'O código da marca deve ser um número inteiro.',
+
+            'descricao.string' => 'A descrição deve ser um texto.',
+
+            'quantidade_estoque.required' => 'A quantidade em estoque é obrigatória.',
+            'quantidade_estoque.integer' => 'A quantidade em estoque deve ser um número inteiro.',
+
+            'valor.required' => 'O valor do produto é obrigatório.',
+            'valor.numeric' => 'O valor deve ser um número.',
+
+            'cod_cidade.required' => 'A cidade é obrigatória.',
+            'cod_cidade.exists' => 'A cidade selecionada não existe.',
+
+            'marca_cod.required' => 'A marca é obrigatória.',
+            'marca_cod.exists' => 'A marca selecionada não existe.'
         ]);
 
-        $produto = new Produto();
-        $produto->name = $request->name;
-        $produto->cod_marca = $request->cod_marca;
-        $produto->descricao = $request->descricao;
-        $produto->quantidade_estoque = $request->quantidade_estoque;
-        $produto->valor = $request->valor;
-        $produto->cidade_id = $request->cidade_id;
-        $produto->marca_id = $request->marca_id;
-        $produto->save();
+
+        Produto::create($validatedData);
 
         return redirect()->route('produto.index')->with('success', 'Produto cadastrado com sucesso.');
     }

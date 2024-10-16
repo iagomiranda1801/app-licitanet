@@ -11,7 +11,7 @@ class CidadeController extends Controller
     public function index(Request $request)
     {
         $name = $request->input('name');
-        $cod_marca = $request->input('cod_marca');
+        $cod_cidade = $request->input('cod_cidade');
 
         $query = Cidade::query();
 
@@ -19,8 +19,8 @@ class CidadeController extends Controller
             $query->where('name', 'like', '%' . $name . '%');
         }
 
-        if ($cod_marca) {
-            $query->where('cod_marca', $cod_marca);
+        if ($cod_cidade) {
+            $query->where('id', $cod_cidade);
         }
 
         $cidades = $query->get();
@@ -78,5 +78,16 @@ class CidadeController extends Controller
 
         // Redirecionar de volta para a lista de marcas com uma mensagem de sucesso
         return redirect()->route('cidade.index')->with('success', 'Cidade atualizada com sucesso.');
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $cidade = Cidade::query()->find($id);
+            $cidade->delete();
+            return redirect()->route('cidade.index')->with('success', 'Cidade excluida com sucesso.');
+        } catch (\Throwable $th) {
+            return redirect()->route('cidade.index')->with('error', 'Erro ao excluir');
+        }
     }
 }

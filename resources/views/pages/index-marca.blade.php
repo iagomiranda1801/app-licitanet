@@ -42,7 +42,7 @@
                             Editar
                         </button>
                         <!-- Botão para excluir a marca -->
-                        <button id="delete-button" type="submit" data-id="{{ $marca->id }}" class="btn btn-danger btn-sm">
+                        <button  type="submit" data-id="{{ $marca->id }}" class="btn btn-danger btn-sm delete-button">
                             Excluir
                         </button>
 
@@ -63,7 +63,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Editar Marca</h5>
+                    <h5 class="modal-title" id="editModalLabel">Editar</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -90,7 +90,7 @@
                             <textarea class="form-control" id="modal-descricao" name="descricao" rows="3"></textarea>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" id="cancel-modal" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                             <button type="submit" class="btn btn-primary">Salvar Alterações</button>
                         </div>
                     </form>
@@ -117,7 +117,11 @@
             $('#editModal').modal('show');
         });
 
-        $('#delete-button').on('click', function() {
+        $("#cancel-modal").on('click', function() {
+            $('#editModal').modal('hide');
+        })
+
+        $('.delete-button').on('click', function() {
             var id = $(this).data('id');
             
             Swal.fire({

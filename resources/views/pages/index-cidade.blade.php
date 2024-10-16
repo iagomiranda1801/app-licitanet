@@ -34,11 +34,11 @@
                     <!-- Botões para Editar e Excluir -->
                     <div class="d-flex justify-content-between">
                         <!-- Botão para abrir a modal de edição -->
-                        <button id="edit-button" type="button" class="btn btn-primary btn-sm edit-button" data-id="{{ $cidade->id }}" data-name="{{ $cidade->name }}">
+                        <button type="button" class="btn btn-primary btn-sm edit-button" data-id="{{ $cidade->id }}" data-name="{{ $cidade->name }}">
                             Editar
                         </button>
                         <!-- Botão para excluir a marca -->
-                        <button id="delete-button" type="submit" data-id="{{ $cidade->id }}" class="btn btn-danger btn-sm">
+                        <button type="button" data-id="{{ $cidade->id }}" data-name="{{ $cidade->name }}" class="btn btn-danger btn-sm delete-button">
                             Excluir
                         </button>
 
@@ -75,7 +75,7 @@
                             @enderror
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" id="cancel-modal" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                             <button type="submit" class="btn btn-primary">Salvar Alterações</button>
                         </div>
                     </form>
@@ -100,9 +100,13 @@
             $('#editModal').modal('show');
         });
 
-        $('#delete-button').on('click', function() {
-            var id = $(this).data('id');
+        $("#cancel-modal").on('click', function() {
+            $('#editModal').modal('hide');
+        })
 
+        $('.delete-button').on('click', function() {
+            var id = $(this).data('id');
+            console.log("id", id)
             Swal.fire({
                 title: 'Tem certeza?',
                 text: 'Esta ação não pode ser desfeita!',

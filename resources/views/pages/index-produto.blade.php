@@ -19,14 +19,14 @@
                 <select class="form-control" id="cod_cidade" name="cod_cidade">
                     <option value="">Selecione uma marca</option>
                     @foreach($cidades as $cidade)
-                    <option value="{{ $cidade->id }}" {{ $marca->cod_cidade == $cidade->id ? 'selected' : '' }}>
+                    <option value="{{ $cidade->id }}" {{ $cidade->cod_cidade == $cidade->id ? 'selected' : '' }}>
                         {{ $cidade->name }}
                     </option>
                     @endforeach
                 </select>
             </div>
             <div class="col-md-4 mb-2">
-                <select class="form-control" id="cod_cidade" name="cod_cidade">
+                <select class="form-control" id="marca_cod" name="marca_cod">
                     <option value="">Selecione uma marca</option>
                     @foreach($marcas as $marca)
                     <option value="{{ $marca->id }}" {{ $marca->cod_marca == $marca->id ? 'selected' : '' }}>
@@ -50,9 +50,6 @@
                     <!-- Nome do Produto -->
                     <h5 class="card-title">{{ $produto->name }}</h5>
 
-                    <!-- Código da Marca -->
-                    <h6 class="card-subtitle mb-2 text-muted">Código: {{ $produto->cod_marca }}</h6>
-
                     <!-- Quantidade em Estoque -->
                     <p class="card-text">Estoque: {{ $produto->estoque }}</p>
 
@@ -75,10 +72,10 @@
                             data-id="{{ $produto->id }}" data-name="{{ $produto->name }}"
                             data-cod_marca="{{ $produto->cod_marca }}"
                             data-descricao="{{ $produto->descricao }}"
-                            data-quantidade_estoque="{{ $produto->quantidade_estoque }}"
+                            data-estoque="{{ $produto->estoque }}"
                             data-valor="{{ $produto->valor }}"
                             data-cidade="{{ $produto->cidade->id }}"
-                            data-marca="{{ $produto->marca->id }}">
+                            data-marca="{{ $produto->marca->cod_marca }}">
                             Editar
                         </button>
 
@@ -96,6 +93,8 @@
         </div>
         @endforelse
     </div>
+    <h6 class="card-subtitle mb-2 text-muted">Total do valor dos produtos: R${{ $soma }}</h6>
+    <h6 class="card-subtitle mb-2 text-muted">Média dos produtos: R$ {{ $media }}</h6>
     <!-- Modal de edição -->
     @if(isset($produto))
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
@@ -109,28 +108,86 @@
                     <form id="editForm" action="{{ route('marca.update', $marca->id) }}" method="POST">
                         @csrf
                         @method('PUT')
-                        <div class="mb-3">
-                            <input type="hidden" id="id-id" class="form-control" id="modal-name" name="name">
-                            <label for="modal-name" class="form-label">Nome</label>
-                            <input type="text" class="form-control" id="modal-name" name="name" required>
-                            @error('name')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
+                        <div class="row">
+                            <!-- Nome do Produto -->
+                            <div class="form-group col-md-6">
+                                <label for="name">Nome</label>
+                                <input type="text" name="name" id="name" class="form-control" placeholder="Nome do Produto" value="{{ old('name') }}">
+                                @error('name')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="modal-cod_marca" class="form-label">Código</label>
-                            <input type="text" class="form-control" id="modal-cod_marca" name="cod_marca" required>
-                            @error('cod_marca')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
+
+                        <div class="row">
+                            <!-- Quantidade em Estoque -->
+                            <div class="form-group col-md-6">
+                                <label for="quantidade_estoque">Quantidade em Estoque</label>
+                                <input type="number" name="estoque" id="estoque" class="form-control" placeholder="Quantidade em Estoque" value="{{ old('estoque') }}">
+                                @error('estoque')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- Valor do Produto -->
+                            <div class="form-group col-md-6">
+                                <label for="valor">Valor (R$)</label>
+                                <input type="number" name="valor" id="valor" class="form-control" placeholder="Valor do Produto" value="{{ old('valor') }}">
+                                @error('valor')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="modal-descricao" class="form-label">Descrição</label>
-                            <textarea class="form-control" id="modal-descricao" name="descricao" rows="3"></textarea>
+
+                        <div class="row">
+                            <!-- Select de Cidades -->
+                            <div class="form-group col-md-6">
+                                <label for="cod_cidade">Cidade</label>
+                                <select name="cod_cidade" id="cod_cidade_one" class="form-control">
+                                    <option value="">Selecione uma cidade</option>
+                                    @foreach($cidades as $cidade)
+                                    <option value="{{ $cidade->id }}" {{ old('cod_cidade') == $cidade->id ? 'selected' : '' }}>
+                                        {{ $cidade->name }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                                @error('cod_cidade')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- Select de Marcas -->
+                            <div class="form-group col-md-6">
+                                <label for="marca_cod">Marca</label>
+                                <select name="marca_cod" id="marca_cod_one" class="form-control">
+                                    <option value="">Selecione uma marca</option>
+                                    @foreach($marcas as $marca)
+                                    <option value="{{ $marca->cod_marca }}" {{ old('marca_cod') == $marca->cod_marca ? 'selected' : '' }}>
+                                        {{ $marca->name }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                                @error('marca_id')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+
+                        <!-- Descrição do Produto (ocupa toda a linha) -->
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="descricao">Descrição</label>
+                                <textarea name="descricao" id="descricao" class="form-control" rows="3" placeholder="Descrição do Produto">{{ old('descricao') }}</textarea>
+                                @error('descricao')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <!-- Botões de Ação -->
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary">Salvar</button>
+                            <a href="{{ route('produto.index') }}" class="btn btn-secondary">Cancelar</a>
                         </div>
                     </form>
                 </div>
@@ -144,21 +201,40 @@
         $('.edit-button').on('click', function() {
             var id = $(this).data('id');
             var name = $(this).data('name');
-            var codMarca = $(this).data('cod_marca');
             var descricao = $(this).data('descricao');
-            console.log("id", id);
-            $('#id-id').val(name);
-            $('#modal-name').val(name);
-            $('#modal-cod_marca').val(codMarca);
-            $('#modal-descricao').val(descricao);
-            $('#editForm').attr('action', '/produto/' + id);
+            var estoque = $(this).data('estoque');
+            var valor = $(this).data('valor');
+            var cidade = $(this).data('cidade');
+            var marca = $(this).data('marca');
+      
+            $('#name').val(name);
+            $('#estoque').val(estoque);
+            $('#descricao').val(descricao);
+            $('#valor').val(valor);
 
+            $('#cod_cidade').val(cidade);
+            $('#marca_cod').val(marca);
+
+            // Percorrer o select e selecionar a opção correta para cidade
+            $('#cod_cidade_one option').each(function() {
+                if ($(this).val() == cidade) {
+                    $(this).prop('selected', true);
+                }
+            });
+
+            // Percorrer o select e selecionar a opção correta para marca
+            $('#marca_cod_one option').each(function() {
+                if ($(this).val() == marca) {
+                    $(this).prop('selected', true);
+                }
+            });
+
+            $('#editForm').attr('action', '/produto/' + id);
             $('#editModal').modal('show');
         });
 
         $('#delete-button').on('click', function() {
             var id = $(this).data('id');
-
             Swal.fire({
                 title: 'Tem certeza?',
                 text: 'Esta ação não pode ser desfeita!',
@@ -180,17 +256,16 @@
                         success: function(response) {
                             Swal.fire(
                                 'Excluído!',
-                                'A marca foi excluída com sucesso.',
+                                'O produto foi excluído com sucesso.',
                                 'success'
                             ).then(() => {
                                 location.reload();
                             });
                         },
                         error: function(response) {
-                            console.log("error", response)
                             Swal.fire(
                                 'Erro!',
-                                'Ocorreu um erro ao tentar excluir a marca.',
+                                'Ocorreu um erro ao tentar excluir o produto.',
                                 'error'
                             );
                         }

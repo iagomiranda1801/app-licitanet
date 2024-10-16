@@ -34,23 +34,14 @@
                     <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
-
-                <!-- Código da Marca -->
-                <div class="form-group col-md-6">
-                    <label for="cod_marca">Código</label>
-                    <input type="number" name="cod_marca" id="cod_marca" class="form-control" placeholder="Código da Marca" value="{{ old('cod_marca') }}">
-                    @error('cod_marca')
-                    <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
             </div>
 
             <div class="row">
                 <!-- Quantidade em Estoque -->
                 <div class="form-group col-md-6">
                     <label for="quantidade_estoque">Quantidade em Estoque</label>
-                    <input type="number" name="quantidade_estoque" id="quantidade_estoque" class="form-control" placeholder="Quantidade em Estoque" value="{{ old('quantidade_estoque') }}">
-                    @error('quantidade_estoque')
+                    <input type="number" name="estoque" id="estoque" class="form-control" placeholder="Quantidade em Estoque" value="{{ old('estoque') }}">
+                    @error('estoque')
                     <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
@@ -64,31 +55,31 @@
                     @enderror
                 </div>
             </div>
-
+       
             <div class="row">
                 <!-- Select de Cidades -->
                 <div class="form-group col-md-6">
-                    <label for="cidade_id">Cidade</label>
-                    <select name="cidade_id" id="cidade_id" class="form-control">
+                    <label for="cod_cidade">Cidade</label>
+                    <select name="cod_cidade" id="cod_cidade" class="form-control">
                         <option value="">Selecione uma cidade</option>
                         @foreach($cidades as $cidade)
-                        <option value="{{ $cidade->id }}" {{ old('cidade_id') == $cidade->id ? 'selected' : '' }}>
-                            {{ $cidade->nome }}
+                        <option value="{{ $cidade->id }}" {{ old('cod_cidade') == $cidade->id ? 'selected' : '' }}>
+                            {{ $cidade->name }}
                         </option>
                         @endforeach
                     </select>
-                    @error('cidade_id')
+                    @error('cod_cidade')
                     <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <!-- Select de Marcas -->
                 <div class="form-group col-md-6">
-                    <label for="marca_id">Marca</label>
-                    <select name="marca_id" id="marca_id" class="form-control">
+                    <label for="marca_cod">Marca</label>
+                    <select name="marca_cod" id="marca_cod" class="form-control">
                         <option value="">Selecione uma marca</option>
                         @foreach($marcas as $marca)
-                        <option value="{{ $marca->id }}" {{ old('marca_id') == $marca->id ? 'selected' : '' }}>
+                        <option value="{{ $marca->cod_marca }}" {{ old('marca_cod') == $marca->cod_marca ? 'selected' : '' }}>
                             {{ $marca->name }}
                         </option>
                         @endforeach

@@ -10,16 +10,16 @@ class Produto extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'cod_marca', 'descricao', 'estoque', 'valor', 'marca_cod', 'cod_marca'
+        'name', 'cod_cidade', 'descricao', 'estoque', 'valor', 'marca_cod'
     ];
 
     public function marca()
     {
-        return $this->hasOne(Marca::class, 'marca_cod', 'cod_marca');
+        return $this->hasOne(Marca::class, 'cod_marca', 'marca_cod');
     }
 
     public function cidade()
     {
-        return $this->hasOne(Cidade::class, 'cod_cidade', 'cod_cidade');
+        return $this->hasOne(Cidade::class, 'id', 'cod_cidade');
     }
 }
