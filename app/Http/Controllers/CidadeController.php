@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cidade;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CidadeController extends Controller
 {
@@ -17,7 +18,7 @@ class CidadeController extends Controller
         if ($name) {
             $query->where('name', 'like', '%' . $name . '%');
         }
-        
+
         if ($cod_marca) {
             $query->where('cod_marca', $cod_marca);
         }
@@ -28,7 +29,7 @@ class CidadeController extends Controller
         return view('pages.index-cidade', compact('cidades'));
     }
 
-    
+
     public function create()
     {
         return view('pages.cidade-create');
@@ -39,21 +40,43 @@ class CidadeController extends Controller
         // Validação dos dados recebidos na requisição
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'cod_cidade' => 'required|string|max:50|unique:marcas,cod_marca',
         ], [
             'name.required' => 'O nome da marca é obrigatório.',
-            'cod_cidade.required' => 'O código da marca é obrigatório.',
-            'cod_cidade.unique' => 'Esse código de marca já está em uso.',
         ]);
-    
+
         // Criar a nova marca com os dados validados
         Cidade::create($validatedData);
-    
+
         // Retornar uma resposta de sucesso com a marca recém-criada
         return redirect()->route('cidade.index')->with('success', 'Cidade criada com sucesso!');
     }
 
-    public function show() {
+    public function show() {}
 
+    public function update(Request $request, $id)
+    {
+        // Validação dos dados recebidos do formulário
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ], [
+            'name.required' => 'O nome da marca é obrigatório.',
+        ]);
+
+
+        // Encontrar a marca pelo ID
+        $cidade = Cidade::find($id);
+
+        if (!$cidade) {
+            return redirect()->route('cidade.index')->with('error', 'Cidade não encontrada.');
+        }
+
+        // Atualizar os dados da marca
+        $cidade->name = $request->input('name');
+
+        // Salvar as alterações no banco de dados
+        $cidade->save();
+
+        // Redirecionar de volta para a lista de marcas com uma mensagem de sucesso
+        return redirect()->route('cidade.index')->with('success', 'Cidade atualizada com sucesso.');
     }
 }

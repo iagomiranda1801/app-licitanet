@@ -13,5 +13,5 @@ Route::apiResource('marca', MarcaController::class);
 Route::apiResource('cidade', CidadeController::class);
 Route::apiResource('produto', ProdutoController::class);
 Route::get('/marcas/create', [MarcaController::class, 'create'])->name('marca.create');
-Route::get('/cidade/create', [CidadeController::class, 'create'])->name('cidade.create');
-Route::get('/produto/create', [ProdutoController::class, 'create'])->name('produto.create');
+Route::get('/cidades/create', [CidadeController::class, 'create'])->name('cidade.create');
+Route::get('/produtos/create', [ProdutoController::class, 'create'])->name('produto.create');

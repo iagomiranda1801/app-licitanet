@@ -63,7 +63,7 @@ class MarcaController extends Controller
     public function update(Request $request, $id)
     {
         // Validação dos dados recebidos do formulário
-        $validatedData = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'cod_marca' => [
                 'required',
@@ -84,7 +84,7 @@ class MarcaController extends Controller
         $marca = Marca::find($id);
 
         if (!$marca) {
-            return redirect()->route('marca.index')->with('error', 'Marca não encontrada.');
+            return redirect()->route('cidade.index')->with('error', 'Marca não encontrada.');
         }
 
         // Atualizar os dados da marca
@@ -96,19 +96,18 @@ class MarcaController extends Controller
         $marca->save();
 
         // Redirecionar de volta para a lista de marcas com uma mensagem de sucesso
-        return redirect()->route('marca.index')->with('success', 'Marca atualizada com sucesso.');
+        return redirect()->route('cidade.index')->with('success', 'Marca atualizada com sucesso.');
     }
 
-    public function destroy($id) {
+    public function destroy($id)
+    {
 
         try {
-            dd('oi');
             $marca = Marca::query()->find($id);
             $marca->delete();
             return redirect()->route('marca.index')->with('success', 'Marca excluida com sucesso.');
         } catch (\Throwable $th) {
             return redirect()->route('marca.index')->with('error', 'Erro ao excluir');
         }
-
     }
 }

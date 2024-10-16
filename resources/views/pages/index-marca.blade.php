@@ -42,9 +42,9 @@
                             Editar
                         </button>
                         <!-- Botão para excluir a marca -->
-                            <button id="delete-button" type="submit" class="btn btn-danger btn-sm">
-                                Excluir
-                            </button>
+                        <button id="delete-button" type="submit" data-id="{{ $marca->id }}" class="btn btn-danger btn-sm">
+                            Excluir
+                        </button>
 
                     </div>
                 </div>
@@ -58,6 +58,7 @@
     </div>
 
     <!-- Modal de edição -->
+    @if(isset($marca))
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -70,6 +71,7 @@
                         @csrf
                         @method('PUT')
                         <div class="mb-3">
+                            <input type="hidden" id="id-id" class="form-control" id="modal-name" name="name">
                             <label for="modal-name" class="form-label">Nome</label>
                             <input type="text" class="form-control" id="modal-name" name="name" required>
                             @error('name')
@@ -96,65 +98,67 @@
             </div>
         </div>
     </div>
+    @endif
 </div>
 <script>
     $(document).ready(function() {
-    $('.edit-button').on('click', function() {
-        var id = $(this).data('id');
-        var name = $(this).data('name');
-        var codMarca = $(this).data('cod_marca');
-        var descricao = $(this).data('descricao');
+        $('.edit-button').on('click', function() {
+            var id = $(this).data('id');
+            var name = $(this).data('name');
+            var codMarca = $(this).data('cod_marca');
+            var descricao = $(this).data('descricao');
+            console.log("id", id);
+            $('#id-id').val(name);
+            $('#modal-name').val(name);
+            $('#modal-cod_marca').val(codMarca);
+            $('#modal-descricao').val(descricao);
+            $('#editForm').attr('action', '/marca/' + id);
 
-        $('#modal-name').val(name);
-        $('#modal-cod_marca').val(codMarca);
-        $('#modal-descricao').val(descricao);
-        $('#editForm').attr('action', '/marca/' + id);
+            $('#editModal').modal('show');
+        });
 
-        $('#editModal').modal('show');
-    });
-
-    $('#delete-button').on('click', function() {
-        var id = $(this).data('id');
-        Swal.fire({
-            title: 'Tem certeza?',
-            text: 'Esta ação não pode ser desfeita!',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sim, excluir!',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: '/marca/' + id,
-                    type: 'POST',
-                    data: {
-                        '_method': 'DELETE',
-                        '_token': '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        Swal.fire(
-                            'Excluído!',
-                            'A marca foi excluída com sucesso.',
-                            'success'
-                        ).then(() => {
-                            location.reload();
-                        });
-                    },
-                    error: function(response) {
-                        console.log("error",response)
-                        Swal.fire(
-                            'Erro!',
-                            'Ocorreu um erro ao tentar excluir a marca.',
-                            'error'
-                        );
-                    }
-                });
-            }
+        $('#delete-button').on('click', function() {
+            var id = $(this).data('id');
+            
+            Swal.fire({
+                title: 'Tem certeza?',
+                text: 'Esta ação não pode ser desfeita!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sim, excluir!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/marca/' + id,
+                        type: 'POST',
+                        data: {
+                            '_method': 'DELETE',
+                            '_token': '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            Swal.fire(
+                                'Excluído!',
+                                'A marca foi excluída com sucesso.',
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(response) {
+                            console.log("error", response)
+                            Swal.fire(
+                                'Erro!',
+                                'Ocorreu um erro ao tentar excluir a marca.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
         });
     });
-});
-
 </script>
 @endsection
