@@ -139,7 +139,6 @@ class ProdutoController extends Controller
     {
         try {
             $produto = Produto::query()->find($id);
-            dd($produto->estoque);
             if ($produto->estoque > 0) {
                 return redirect()->route('produto.index')->with('error', 'Erro ao excluir, produto com saldo em estoque');
             } else {

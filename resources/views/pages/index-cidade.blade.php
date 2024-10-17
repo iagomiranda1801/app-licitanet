@@ -128,7 +128,7 @@
                         success: function(response) {
                             Swal.fire(
                                 'Excluído!',
-                                'A marca foi excluída com sucesso.',
+                                'A cidade foi excluída com sucesso.',
                                 'success'
                             ).then(() => {
                                 location.reload();

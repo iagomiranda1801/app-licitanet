@@ -96,7 +96,7 @@ class MarcaController extends Controller
         $marca->save();
 
         // Redirecionar de volta para a lista de marcas com uma mensagem de sucesso
-        return redirect()->route('cidade.index')->with('success', 'Marca atualizada com sucesso.');
+        return redirect()->route('marca.index')->with('success', 'Marca atualizada com sucesso.');
     }
 
     public function destroy($id)

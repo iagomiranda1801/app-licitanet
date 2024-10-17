@@ -59,7 +59,7 @@ class CidadeController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
         ], [
-            'name.required' => 'O nome da marca é obrigatório.',
+            'name.required' => 'O nome da cidade é obrigatório.',
         ]);
 
 
